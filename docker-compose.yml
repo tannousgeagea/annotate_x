@@ -1,0 +1,23 @@
+version: '3.3'
+
+services:
+  # computing unit
+  cvision-dl-ops:
+    image: tannous/tannous:annotatex-ubuntu.22.04-cuda.12.5.1
+    container_name: annotatex-core
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    build:
+      context: .
+      args:
+        user: ${user}
+        userid: ${userid}
+        group: ${group}
+        groupid: ${groupid}
+    network_mode: host
+    env_file: .env
+    restart: unless-stopped
+    working_dir: /home/$user/src
+    volumes:
+      - .:/home/$user/src
+    user: ${user}
