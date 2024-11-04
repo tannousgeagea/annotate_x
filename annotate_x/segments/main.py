@@ -5,7 +5,8 @@ import cv2
 import logging
 from common_utils.annotate.core import Annotator
 from segments.tasks import (
-    segment
+    segment,
+    train,
 )
 
 VALID_FORMAT = ['jpeg', 'png', 'jpg', 'webp']
@@ -17,13 +18,9 @@ def load_image(path):
 
     return cv2.imread(path)
 
-def main(
-    source,
-):
+def find_images(source):
     
     try:
-        images = []
-        print(os.path.isdir(source))
         if os.path.isdir(source):
             images = sorted([os.path.join(source, f) for f in os.listdir(source) if f.endswith(tuple(VALID_FORMAT))])
         
@@ -32,7 +29,15 @@ def main(
         
         else:
             images = sorted([os.path.join(source, f) for f in os.listdir(source) if f.endswith(tuple(VALID_FORMAT))])
-        
+            
+        return images
+    except Exception as err:
+        raise ValueError(f"Failed to find images: {err}")    
+    
+
+def annotate(source):
+    try:
+        images = find_images(source=source)
         for image in images:
             cv_image = load_image(image)
             if cv_image is None:
@@ -66,12 +71,40 @@ def main(
                 f"/home/appuser/src/data/predictions/{os.path.basename(image)}",
                 annotator.im.data
             )
+    except Exception as err:
+        raise ValueError(f"Failed to annotate: {err}")
 
+def train_model(params):
+    try:
+        assert 'data' in params, f"Missing argument in tain: data"
+        results = train.core.execute(params)
+        
+    except Exception as err:
+        raise ValueError(f"Failed to train: {err}")
+    
+task_mapper = {
+    "train": train_model,
+    "annotate": annotate,
+}    
+
+def main(
+    task,
+    params,
+):
+    
+    try:
+        assert task in task_mapper, f"unsupported task: {task} ! Supported Task are: {list(task_mapper.keys())}"
+        func = task_mapper[task]
+        func(params) 
     except Exception as err:
         logging.error(f"Error: {err}")
         
-        
 if __name__ == "__main__":
+    params = {
+        "data": "/home/appuser/src/data/amk_top_segmentation.augmented.yolov8/data.yaml",
+    }
+    
     main(
-        source='/home/appuser/src/data/images'
+        task='train',
+        params=params,
     )

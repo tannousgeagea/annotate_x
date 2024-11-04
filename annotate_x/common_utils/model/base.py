@@ -92,3 +92,54 @@ class BaseModels:
             return self.model.unwrap_python_model().track(image, conf=conf)
         
         return self.model.track(image, persist=True, conf=conf, classes=classes)
+    
+    def train(self, 
+              data:str, 
+              imgsz:int=None, 
+              optimizer:str=None, 
+              lr0:float=None, 
+              lrf:float=None, 
+              epochs:int=100, 
+              batch:int=8, 
+              augment:bool=False, 
+              name:str=""
+              ):
+        
+        if lr0 is None:
+            logging.info('setting lr0 to default: lr0 = 0.0001')
+            lr0 = 0.0001
+        
+        if imgsz is None:
+            logging.info('setting imgsz to default: imgsz = 640')
+            imgsz = 640
+        
+        if lrf is None:
+            logging.info('setting lrf to default: lrf = 0.000001') 
+            lrf = 0.000001
+            
+        if lrf >= lr0:
+            lrf = lr0 * 1e-2
+        
+        if epochs is None:
+            logging.info('setting epochs to default: epochs = 100')
+            epochs = 100
+
+        if batch is None:
+            logging.info('setting batch to default: batch = 4')
+            batch = 4
+            
+        if optimizer is None:
+            logging.info('setting optimizer to default: optimizer = SGD')
+            optimizer = "SGD"
+            
+        return self.model.train(
+            data=data,
+            imgsz=imgsz,
+            optimizer=optimizer,
+            lr0=lr0,
+            lrf=lrf,
+            epochs=epochs,
+            batch=batch,
+            augment=augment,
+            name=name,
+        )
