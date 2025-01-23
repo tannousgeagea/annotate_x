@@ -21,3 +21,10 @@ services:
     volumes:
       - .:/home/$user/src
     user: ${user}
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]

@@ -72,7 +72,7 @@ RUN pip3 install requests
 RUN pip3 install python-redis-lock
 RUN pip3 install grpcio
 RUN pip3 install grpcio-tools
-RUN pip3 install confluent-kafka
+# RUN pip3 install confluent-kafka
 RUN pip3 install mlflow
 RUN pip3 install azureml-mlflow
 
