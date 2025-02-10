@@ -191,14 +191,4 @@ if __name__ == "__main__":
     #     params=params,
     #     model=model
     # )
-    
-    from inference_sdk import InferenceHTTPClient
 
-    CLIENT = InferenceHTTPClient(
-        api_url="https://detect.roboflow.com",
-        api_key="qm0YWCLBTWPm82O4QfuH"
-    )
-
-    result = CLIENT.infer("/home/appuser/src/data/predictions/025.jpg_039.jpg", model_id="garbage-classification-3/2")
-    
-    print(result)
