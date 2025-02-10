@@ -12,7 +12,7 @@ from common_utils.detection.core import Detections
 
 roi = None
 
-def predict(image, model):
+def predict(image, model, conf:int=0.25, mode:str="detect"):
     detections = Detections.from_dict({})
     try:
         assert not image is None, f'Image is None'
@@ -29,7 +29,7 @@ def predict(image, model):
             y_min, y_max = min(y_coords), max(y_coords)
             c_image = image[y_min:y_max, x_min:x_max]
             
-        results = model.classify_one(image=c_image, conf=float(params.get('conf')), mode=params.get('mode'))
+        results = model.classify_one(image=c_image, conf=conf, mode=mode)
         detections = Detections.from_dict(results=results)
         
         if roi:

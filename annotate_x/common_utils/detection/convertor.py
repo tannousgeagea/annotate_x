@@ -317,9 +317,9 @@ def polygon_to_mask(polygon: np.ndarray, resolution_wh: Tuple[int, int]) -> np.n
             `1`'s and the rest is filled with `0`'s.
     """
     width, height = resolution_wh
-    mask = np.zeros((height, width))
+    mask = np.zeros((height, width), dtype=np.uint8)
 
-    cv2.fillPoly(mask, [polygon], color=1)
+    cv2.fillPoly(mask, [polygon], color=255)
     return mask
 
 def mask_to_xyxy(masks: np.ndarray) -> np.ndarray:
@@ -483,3 +483,8 @@ def scale_boxes(xyxy: np.ndarray, factor: float) -> np.ndarray:
     centers = (xyxy[:, :2] + xyxy[:, 2:]) / 2
     new_sizes = (xyxy[:, 2:] - xyxy[:, :2]) * factor
     return np.concatenate((centers - new_sizes / 2, centers + new_sizes / 2), axis=1)
+
+def rescale_polygon(polygon: np.ndarray, wh0: Tuple[int, int], wh: Tuple[int, int]) -> np.ndarray:
+    xyxyn = polygon / np.array([wh0[0], wh0[1]])
+    xyxy = xyxyn * np.array([wh[0], wh[1]])
+    return xyxy.astype(np.int32).squeeze()
